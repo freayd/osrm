@@ -1,4 +1,5 @@
 require 'osrm/query'
+require 'osrm/route'
 require 'osrm/version'
 
 module OSRM

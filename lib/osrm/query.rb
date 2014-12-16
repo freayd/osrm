@@ -12,8 +12,27 @@ module OSRM
     end
 
     def execute
-      fetch_json_data
-      # TODO: Convert json to [Route, Route, Route, ...]
+      json = fetch_json_data
+      routes = []
+      return routes if json.nil?
+
+      # Main route
+      routes << Route.new(
+        geometry: json['route_geometry'],
+        summary:  json['route_summary']
+      )
+
+      # Alternative routes
+      if json['found_alternative']
+        json['alternative_geometries'].each_index do |index|
+          routes << Route.new(
+            geometry: json['alternative_geometries'][index],
+            summary:  json['alternative_summaries'][index]
+          )
+        end
+      end
+
+      routes
     end
 
     private
