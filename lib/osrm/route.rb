@@ -19,7 +19,7 @@ module OSRM
 
     # HACK: Should fix encoded_polyline gem instead
     def fix_float_precision(float)
-      decimals = float.to_s.sub(/\A\d+\./, '')
+      decimals = float.to_f.to_s[/\d+\z/]
       fixed_decimals = decimals.sub(/(\d)\1{5,}\d{,2}\z/, '')
 
       decimals == fixed_decimals ? float : float.round(fixed_decimals.size)
