@@ -65,10 +65,10 @@ module OSRM
     end
 
     def api_request
+      build_uri
       timeout(3) do
-        uri = URI.parse(url)
-
-        Net::HTTP.start(uri.host, uri.port, use_ssl: use_ssl?) do |http|
+        Net::HTTP.start(uri.host, uri.port,
+                        use_ssl: configuration.use_ssl?) do |http|
           response = http.get(
             uri.request_uri,
             'User-Agent' => "OSRMRubyGem/#{OSRM::VERSION}"
@@ -87,7 +87,9 @@ module OSRM
     def valid_response?(response)
       return true if response.is_a?(Net::HTTPOK)
 
-      if response['location'] && response['location']['forbidden.html']
+      if configuration.use_demo_server? &&
+         response['location'] &&
+         response['location']['forbidden.html']
         warn 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
       else
         warn 'OSRM API error: Invalid response' \
@@ -97,9 +99,9 @@ module OSRM
       false
     end
 
-    def url
-      protocol = "http#{'s' if use_ssl?}"
-      host     = 'router.project-osrm.org'
+    def build_uri
+      fail "OSRM API error: Server isn't configured" unless configuration.server
+
       service  = 'viaroute'
       params = [
         *@locations.map { |l| ['loc', l] },
@@ -107,11 +109,22 @@ module OSRM
         %w(instructions false),
         %w(alt true)
       ]
-      "#{protocol}://#{host}/#{service}?#{URI.encode_www_form(params)}"
+
+      uri_class = configuration.use_ssl? ? URI::HTTPS : URI::HTTP
+      @uri = uri_class.build(
+        host: configuration.server,
+        port: configuration.port,
+        path: "/#{service}",
+        query: URI.encode_www_form(params)
+      )
     end
 
-    def use_ssl?
-      true
+    def uri
+      @uri || build_uri
+    end
+
+    def configuration
+      OSRM.configuration
     end
   end
 end
