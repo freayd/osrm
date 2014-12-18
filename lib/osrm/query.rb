@@ -8,7 +8,7 @@ module OSRM
     attr_accessor :locations
 
     def initialize(*locations)
-      @locations = locations
+      @locations = locations.compact.reject(&:empty?)
     end
 
     def execute
