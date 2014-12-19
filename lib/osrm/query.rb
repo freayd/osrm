@@ -66,12 +66,12 @@ module OSRM
 
     def api_request
       build_uri
-      timeout(3) do
+      timeout(configuration.timeout) do
         Net::HTTP.start(uri.host, uri.port,
                         use_ssl: configuration.use_ssl?) do |http|
           response = http.get(
             uri.request_uri,
-            'User-Agent' => "OSRMRubyGem/#{OSRM::VERSION}"
+            'User-Agent' => configuration.user_agent
           )
 
           if response.class.body_permitted?

@@ -9,16 +9,31 @@ class TestConfiguration < Minitest::Test
     assert_nil @configuration.server
     assert_nil @configuration.port
     refute @configuration.use_ssl?
+    assert_equal 3, @configuration.timeout
+    assert_match /\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent
+
     refute @configuration.use_demo_server?
   end
 
   def test_merge
-    @configuration.server = 'example.com'
+    @configuration.server  = 'server.com'
+    @configuration.port    = 51
     @configuration.use_ssl = true
-    @configuration.merge!(server: 'other.com', port: 123)
-    assert_equal 'other.com', @configuration.server
+    @configuration.merge!(
+      port:       123,
+      use_ssl:    false,
+      invalid:    'invalid option!',
+      timeout:    42,
+      user_agent: 'OneAgent/6.0'
+    )
+    assert_equal 'server.com', @configuration.server
     assert_equal 123, @configuration.port
-    assert @configuration.use_ssl?
+    refute @configuration.use_ssl?
+    assert_equal 42, @configuration.timeout
+    assert_equal 'OneAgent/6.0', @configuration.user_agent
+    refute_respond_to @configuration, :invalid
+
+    assert_same @configuration, @configuration.merge!(key: 'value')
   end
 
   def test_server
@@ -55,6 +70,17 @@ class TestConfiguration < Minitest::Test
 
   def test_ssl_change
     randomize_change(:test_ssl_true, :test_ssl_false)
+  end
+
+  def test_timeout
+    @configuration.timeout = 5.0
+    assert_equal 5, @configuration.timeout
+    assert_instance_of Fixnum, @configuration.timeout
+  end
+
+  def test_user_agent
+    @configuration.user_agent = 'Bot/0.1'
+    assert_equal 'Bot/0.1', @configuration.user_agent
   end
 
   def randomize_change(method_1, method_2)

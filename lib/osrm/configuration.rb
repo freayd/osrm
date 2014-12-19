@@ -1,13 +1,16 @@
 require 'singleton'
+require 'osrm/version'
 
 module OSRM
   class Configuration
     include Singleton
 
     DEFAULTS = {
-      server:  nil,
-      port:    nil,
-      use_ssl: false
+      server:     nil,
+      port:       nil,
+      use_ssl:    false,
+      timeout:    3,
+      user_agent: "OSRMRubyGem/#{OSRM::VERSION}"
     }.freeze
 
     DEMO_SERVER = 'router.project-osrm.org'.freeze
@@ -35,6 +38,10 @@ module OSRM
 
     def use_ssl=(use_ssl)
       @data[:use_ssl] = use_ssl ? true : false
+    end
+
+    def timeout=(timeout)
+      @data[:timeout] = timeout && timeout.to_i
     end
 
     def use_demo_server?
