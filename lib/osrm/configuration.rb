@@ -42,8 +42,8 @@ module OSRM
     end
 
     # Dynamically add missing accessors
-    DEFAULTS.each do |option, value|
-      reader = case value
+    DEFAULTS.each do |option, default_value|
+      reader = case default_value
                when TrueClass, FalseClass then :"#{option}?"
                else option
                end
