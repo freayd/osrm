@@ -1,21 +1,6 @@
 require 'singleton'
 
 module OSRM
-  def self.configure(options)
-    if options[:server] == :demo
-      options.merge!(
-        server: Configuration::DEMO_SERVER.dup,
-        port:   nil
-      )
-    end
-
-    Configuration.instance.merge!(options)
-  end
-
-  def self.configuration
-    Configuration.instance
-  end
-
   class Configuration
     include Singleton
 
@@ -32,16 +17,28 @@ module OSRM
     end
 
     def merge!(options)
-      @data.merge!(options)
+      options.each do |option, value|
+        public_send(:"#{option}=", value) if DEFAULTS.key?(option.to_sym)
+      end
+
       self
+    end
+
+    def server=(server)
+      @data[:server] =
+        server == :demo ? Configuration::DEMO_SERVER.dup : server
+    end
+
+    def port=(port)
+      @data[:port] = port && port.to_i
+    end
+
+    def use_ssl=(use_ssl)
+      @data[:use_ssl] = use_ssl ? true : false
     end
 
     def use_demo_server?
       @data[:server] == DEMO_SERVER
-    end
-
-    def port
-      @data[:port] && @data[:port].to_i
     end
 
     def use_ssl?
@@ -49,9 +46,14 @@ module OSRM
     end
 
     # Dynamically add missing accessors
-    DEFAULTS.each_key do |key|
-      define_method(key) { @data[key] } unless method_defined?(key)
-      define_method(:"#{key}=") { |value| @data[key] = value }
+    DEFAULTS.each_key do |option|
+      reader = option
+      writer = :"#{option}="
+
+      define_method(reader) { @data[option] }
+      unless method_defined?(writer)
+        define_method(writer) { |value| @data[option] = value }
+      end
     end
   end
 end
