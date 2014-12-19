@@ -41,13 +41,12 @@ module OSRM
       @data[:server] == DEMO_SERVER
     end
 
-    def use_ssl?
-      @data[:use_ssl]
-    end
-
     # Dynamically add missing accessors
-    DEFAULTS.each_key do |option|
-      reader = option
+    DEFAULTS.each do |option, value|
+      reader = case value
+               when TrueClass, FalseClass then :"#{option}?"
+               else option
+               end
       writer = :"#{option}="
 
       define_method(reader) { @data[option] }
