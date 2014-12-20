@@ -13,11 +13,20 @@ You can [run your own server](https://github.com/Project-OSRM/osrm-backend/wiki)
 
         require 'osrm'
         OSRM.configure(
-          server:     'example.com',
-          port:       8080,          # Default: 80 or 443 if SSL
-          use_ssl:    true,          # Default: false
-          timeout:    10,            # Default: 3
-          user_agent: 'MyScript/1.1' # Default: OSRMRubyGem/{version}
+
+          # Connection
+          server:     'example.com',      # Must be specified
+          port:       8080,               # Default: 80 or 443 if SSL
+          use_ssl:    true,               # Default: false
+          timeout:    10,                 # Default: 3
+          user_agent: 'MyScript/1.1',     # Default: 'OSRMRubyGem/{version}'
+
+          # Caching
+          # The cache can be any object providing [] and []= methods.
+          # The cache key must contain the {url} pattern.
+          cache:      {},                 # Default: nil (no cache)
+          cache_key:  'my-script:{url}'   # Default: 'osrm:{url}'
+
         )
 
 3. Request

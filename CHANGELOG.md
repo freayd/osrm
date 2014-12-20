@@ -1,5 +1,10 @@
 ## Changelog
 
+### OSRM Gem 0.2.0 (2014 Dec 20) ###
+
+* Add caching support
+* Switch to MIT License
+
 ### OSRM Gem 0.1.0 (2014 Dec 19) ###
 
 Initial release:
@@ -12,3 +17,4 @@ Initial release:
 First (and empty) release:
 
 * Provide version number
+* GPL v3 License
