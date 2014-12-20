@@ -27,4 +27,4 @@ You can [run your own server](https://github.com/Project-OSRM/osrm-backend/wiki)
 
 ## License
 
-OSRM Gem is released under [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
+OSRM Gem is released under [MIT License](http://opensource.org/licenses/MIT).

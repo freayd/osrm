@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary     = 'OSRM API for Ruby'
   s.description = 'Ruby API to request Open Source Routing Machine servers'
 
-  s.license     = 'GPL-3.0'
+  s.license     = 'MIT'
   s.author      = 'Freayd'
   s.homepage    = 'https://github.com/freayd/osrm'
 
