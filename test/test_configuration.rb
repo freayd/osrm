@@ -11,6 +11,8 @@ class TestConfiguration < Minitest::Test
     refute @configuration.use_ssl?
     assert_equal 3, @configuration.timeout
     assert_match /\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent
+    assert_nil @configuration.cache
+    assert_match /\A.{2,10}\{url\}\z/, @configuration.cache_key
 
     refute @configuration.use_demo_server?
   end
@@ -19,18 +21,24 @@ class TestConfiguration < Minitest::Test
     @configuration.server  = 'server.com'
     @configuration.port    = 51
     @configuration.use_ssl = true
+    @configuration.cache   = nil
     @configuration.merge!(
       port:       123,
       use_ssl:    false,
       invalid:    'invalid option!',
       timeout:    42,
-      user_agent: 'OneAgent/6.0'
+      user_agent: 'OneAgent/6.0',
+      cache:      {},
+      cache_key:  'one-agent-{url}'
     )
     assert_equal 'server.com', @configuration.server
     assert_equal 123, @configuration.port
     refute @configuration.use_ssl?
     assert_equal 42, @configuration.timeout
     assert_equal 'OneAgent/6.0', @configuration.user_agent
+    assert_kind_of Hash, @configuration.cache
+    assert_empty @configuration.cache
+    assert_equal 'one-agent-{url}', @configuration.cache_key
     refute_respond_to @configuration, :invalid
 
     assert_same @configuration, @configuration.merge!(key: 'value')
@@ -81,6 +89,29 @@ class TestConfiguration < Minitest::Test
   def test_user_agent
     @configuration.user_agent = 'Bot/0.1'
     assert_equal 'Bot/0.1', @configuration.user_agent
+  end
+
+  def test_nil_cache
+    @configuration.cache = nil
+    assert_nil @configuration.cache
+  end
+
+  def test_cache
+    @configuration.cache = { 'a' => '1', 'b' => '2' }
+    refute_empty @configuration.cache
+    assert_equal '1', @configuration.cache['a']
+    assert_equal '2', @configuration.cache['b']
+  end
+
+  def test_cache_change
+    randomize_change(:test_nil_cache, :test_cache)
+  end
+
+  def test_cache_key
+    @configuration.cache_key = 'test $ {url}'
+    assert_equal 'test $ {url}', @configuration.cache_key
+
+    assert_raises(RuntimeError) { @configuration.cache_key = 'invalid key' }
   end
 
   def randomize_change(method_1, method_2)

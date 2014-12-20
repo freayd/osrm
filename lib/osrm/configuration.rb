@@ -10,13 +10,16 @@ module OSRM
       port:       nil,
       use_ssl:    false,
       timeout:    3,
-      user_agent: "OSRMRubyGem/#{OSRM::VERSION}"
+      user_agent: "OSRMRubyGem/#{OSRM::VERSION}",
+      cache:      nil,
+      cache_key:  'osrm:{url}'
     }.freeze
 
     DEMO_SERVER = 'router.project-osrm.org'.freeze
 
     def initialize
-      @data = DEFAULTS.dup
+      @data = {}
+      merge!(DEFAULTS.dup)
     end
 
     def merge!(options)
@@ -32,6 +35,10 @@ module OSRM
         server == :demo ? Configuration::DEMO_SERVER.dup : server
     end
 
+    def use_demo_server?
+      @data[:server] == DEMO_SERVER
+    end
+
     def port=(port)
       @data[:port] = port && port.to_i
     end
@@ -44,8 +51,12 @@ module OSRM
       @data[:timeout] = timeout && timeout.to_i
     end
 
-    def use_demo_server?
-      @data[:server] == DEMO_SERVER
+    def cache_key=(cache_key)
+      unless cache_key.include?('{url}')
+        fail "OSRM API error: Invalid cache key #{cache_key.inspect}"
+      end
+
+      @data[:cache_key] = cache_key
     end
 
     # Dynamically add missing accessors

@@ -38,8 +38,13 @@ module OSRM
     private
 
     def fetch_json_data
-      raw_data = fetch_raw_data
-      JSON.parse(raw_data) if raw_data
+      build_uri
+      raw_data = cache || fetch_raw_data
+
+      json = JSON.parse(raw_data) if raw_data
+
+      cache(raw_data)
+      json
     rescue JSON::ParserError
       warn 'OSRM API error: Invalid JSON'
     end
@@ -65,7 +70,6 @@ module OSRM
     end
 
     def api_request
-      build_uri
       timeout(configuration.timeout) do
         Net::HTTP.start(uri.host, uri.port,
                         use_ssl: configuration.use_ssl?) do |http|
@@ -121,6 +125,21 @@ module OSRM
 
     def uri
       @uri || build_uri
+    end
+
+    def cache(value = nil)
+      return nil unless OSRM.configuration.cache
+
+      if value
+        OSRM.configuration.cache[cache_key('version')] ||= OSRM::VERSION
+        OSRM.configuration.cache[cache_key(uri.to_s)] = value
+      else
+        OSRM.configuration.cache[cache_key(uri.to_s)]
+      end
+    end
+
+    def cache_key(url)
+      OSRM.configuration.cache_key.gsub('{url}', url)
     end
 
     def configuration
