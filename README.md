@@ -18,8 +18,12 @@ You can [run your own server](https://github.com/Project-OSRM/osrm-backend/wiki)
           server:     'example.com',      # Must be specified
           port:       8080,               # Default: 80 or 443 if SSL
           use_ssl:    true,               # Default: false
-          timeout:    10,                 # Default: 3
-          user_agent: 'MyScript/1.1',     # Default: 'OSRMRubyGem/{version}'
+
+          # Connection (advanced)
+          timeout:        10,                               # Default: 3
+          user_agent:     'MyScript/1.1',                   # Default: 'OSRMRubyGem/{version}'
+          before_request: -> { sleep 1 },                   # Default: nil
+          after_request:  -> { puts 'Request performed!' }, # Default: nil
 
           # Caching
           # The cache can be any object providing [] and []= methods.

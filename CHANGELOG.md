@@ -1,5 +1,9 @@
 ## Changelog
 
+### OSRM Gem 0.3.0 (2014 Dec 21) ###
+
+* Add before & after request callbacks
+
 ### OSRM Gem 0.2.0 (2014 Dec 20) ###
 
 * Add caching support
