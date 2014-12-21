@@ -50,7 +50,10 @@ module OSRM
     end
 
     def fetch_raw_data
+      configuration.before_request.call if configuration.before_request
       response = api_request
+      configuration.after_request.call if configuration.after_request
+
       response.body if valid_response?(response)
     rescue SocketError
       warn 'OSRM API error: Unable to establish connection'

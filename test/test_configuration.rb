@@ -9,8 +9,12 @@ class TestConfiguration < Minitest::Test
     assert_nil @configuration.server
     assert_nil @configuration.port
     refute @configuration.use_ssl?
+
     assert_equal 3, @configuration.timeout
     assert_match /\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent
+    assert_nil @configuration.before_request
+    assert_nil @configuration.after_request
+
     assert_nil @configuration.cache
     assert_match /\A.{2,10}\{url\}\z/, @configuration.cache_key
 
@@ -21,21 +25,30 @@ class TestConfiguration < Minitest::Test
     @configuration.server  = 'server.com'
     @configuration.port    = 51
     @configuration.use_ssl = true
+    @configuration.before_request = -> {}
+    @configuration.after_request  = -> {}
     @configuration.cache   = nil
     @configuration.merge!(
-      port:       123,
-      use_ssl:    false,
-      invalid:    'invalid option!',
-      timeout:    42,
-      user_agent: 'OneAgent/6.0',
+      port:    123,
+      use_ssl: false,
+      invalid: 'invalid option!',
+
+      timeout:       42,
+      user_agent:    'OneAgent/6.0',
+      after_request: nil,
+
       cache:      {},
       cache_key:  'one-agent-{url}'
     )
     assert_equal 'server.com', @configuration.server
     assert_equal 123, @configuration.port
     refute @configuration.use_ssl?
+
     assert_equal 42, @configuration.timeout
     assert_equal 'OneAgent/6.0', @configuration.user_agent
+    assert_kind_of Proc, @configuration.before_request
+    assert_nil @configuration.after_request
+
     assert_kind_of Hash, @configuration.cache
     assert_empty @configuration.cache
     assert_equal 'one-agent-{url}', @configuration.cache_key
@@ -89,6 +102,15 @@ class TestConfiguration < Minitest::Test
   def test_user_agent
     @configuration.user_agent = 'Bot/0.1'
     assert_equal 'Bot/0.1', @configuration.user_agent
+  end
+
+  def test_before_after_request
+    @configuration.before_request = proc {}
+    @configuration.after_request  = -> {}
+    assert_kind_of Proc, @configuration.before_request
+    assert_kind_of Proc, @configuration.after_request
+    refute @configuration.before_request.lambda?
+    assert @configuration.after_request.lambda?
   end
 
   def test_nil_cache

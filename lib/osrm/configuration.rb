@@ -6,13 +6,17 @@ module OSRM
     include Singleton
 
     DEFAULTS = {
-      server:     nil,
-      port:       nil,
-      use_ssl:    false,
-      timeout:    3,
-      user_agent: "OSRMRubyGem/#{OSRM::VERSION}",
-      cache:      nil,
-      cache_key:  'osrm:{url}'
+      server:  nil,
+      port:    nil,
+      use_ssl: false,
+
+      timeout:        3,
+      user_agent:     "OSRMRubyGem/#{OSRM::VERSION}",
+      before_request: nil,
+      after_request:  nil,
+
+      cache:     nil,
+      cache_key: 'osrm:{url}'
     }.freeze
 
     DEMO_SERVER = 'router.project-osrm.org'.freeze
@@ -49,6 +53,22 @@ module OSRM
 
     def timeout=(timeout)
       @data[:timeout] = timeout && timeout.to_i
+    end
+
+    def before_request=(before_request)
+      if before_request && !before_request.is_a?(Proc)
+        fail "OSRM API error: Invalid before request #{before_request.inspect}"
+      end
+
+      @data[:before_request] = before_request
+    end
+
+    def after_request=(after_request)
+      if after_request && !after_request.is_a?(Proc)
+        fail "OSRM API error: Invalid after request #{after_request.inspect}"
+      end
+
+      @data[:after_request] = after_request
     end
 
     def cache_key=(cache_key)
