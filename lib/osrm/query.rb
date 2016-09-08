@@ -68,7 +68,7 @@ module OSRM
       else
         raise
       end
-    rescue TimeoutError
+    rescue Timeout::Error
       warn 'OSRM API error: Timeout expired'
     end
 
