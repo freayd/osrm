@@ -73,7 +73,7 @@ module OSRM
     end
 
     def api_request
-      timeout(configuration.timeout) do
+      Timeout.timeout(configuration.timeout) do
         Net::HTTP.start(uri.host, uri.port,
                         use_ssl: configuration.use_ssl?) do |http|
           response = http.get(
