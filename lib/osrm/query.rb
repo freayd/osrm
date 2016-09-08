@@ -45,8 +45,8 @@ module OSRM
 
       cache(raw_data)
       json
-    rescue JSON::ParserError
-      warn 'OSRM API error: Invalid JSON'
+    rescue JSON::ParserError => error
+      warn "OSRM API error: Invalid JSON: (#{error})"
     end
 
     def fetch_raw_data
