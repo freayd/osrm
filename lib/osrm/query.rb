@@ -57,10 +57,10 @@ module OSRM
       response.body if valid_response?(response)
     rescue SocketError
       warn 'OSRM API error: Unable to establish connection'
-    rescue SystemCallError => err
+    rescue SystemCallError => error
       # NOTE: Identify error class by string in case the class
       #   is not implemented on the current platform
-      case err.class.to_s
+      case error.class.to_s
       when 'Errno::EHOSTDOWN'
         warn 'OSRM API error: Host is down'
       when 'Errno::ECONNREFUSED'
