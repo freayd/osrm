@@ -107,7 +107,7 @@ module OSRM
     end
 
     def build_uri
-      fail "OSRM API error: Server isn't configured" unless configuration.server
+      raise "OSRM API error: Server isn't configured" unless configuration.server
 
       service  = 'viaroute'
       params = [

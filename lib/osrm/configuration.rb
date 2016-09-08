@@ -57,7 +57,7 @@ module OSRM
 
     def before_request=(before_request)
       if before_request && !before_request.is_a?(Proc)
-        fail "OSRM API error: Invalid before request #{before_request.inspect}"
+        raise "OSRM API error: Invalid before request #{before_request.inspect}"
       end
 
       @data[:before_request] = before_request
@@ -65,7 +65,7 @@ module OSRM
 
     def after_request=(after_request)
       if after_request && !after_request.is_a?(Proc)
-        fail "OSRM API error: Invalid after request #{after_request.inspect}"
+        raise "OSRM API error: Invalid after request #{after_request.inspect}"
       end
 
       @data[:after_request] = after_request
@@ -73,7 +73,7 @@ module OSRM
 
     def cache_key=(cache_key)
       unless cache_key.include?('{url}')
-        fail "OSRM API error: Invalid cache key #{cache_key.inspect}"
+        raise "OSRM API error: Invalid cache key #{cache_key.inspect}"
       end
 
       @data[:cache_key] = cache_key
