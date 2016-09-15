@@ -46,7 +46,7 @@ module OSRM
       cache(raw_data)
       json
     rescue JSON::ParserError => error
-      warn "OSRM API error: Invalid JSON: (#{error})"
+      raise "OSRM API error: Invalid JSON: (#{error})"
     end
 
     def fetch_raw_data
@@ -54,22 +54,23 @@ module OSRM
       response = api_request
       configuration.after_request.call if configuration.after_request
 
-      response.body if valid_response?(response)
+      ensure_valid_response(response)
+      response.body
     rescue SocketError
-      warn 'OSRM API error: Unable to establish connection'
+      raise 'OSRM API error: Unable to establish connection'
     rescue SystemCallError => error
       # NOTE: Identify error class by string in case the class
       #   is not implemented on the current platform
       case error.class.to_s
       when 'Errno::EHOSTDOWN'
-        warn 'OSRM API error: Host is down'
+        raise 'OSRM API error: Host is down'
       when 'Errno::ECONNREFUSED'
-        warn 'OSRM API error: Connection refused'
+        raise 'OSRM API error: Connection refused'
       else
         raise
       end
     rescue Timeout::Error
-      warn 'OSRM API error: Timeout expired'
+      raise 'OSRM API error: Timeout expired'
     end
 
     def api_request
@@ -91,19 +92,17 @@ module OSRM
       end
     end
 
-    def valid_response?(response)
-      return true if response.is_a?(Net::HTTPOK)
+    def ensure_valid_response(response)
+      return if response.is_a?(Net::HTTPOK)
 
       if configuration.use_demo_server? &&
          response['location'] &&
          response['location']['forbidden.html']
-        warn 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
+        raise 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
       else
-        warn 'OSRM API error: Invalid response' \
-             " #{response.code} #{response.message}"
+        raise 'OSRM API error: Invalid response' \
+              " #{response.code} #{response.message}"
       end
-
-      false
     end
 
     def build_uri
