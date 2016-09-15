@@ -71,6 +71,14 @@ module OSRM
       @data[:after_request] = after_request
     end
 
+    def cache_key(url = nil)
+      if url
+        @data[:cache_key]&.gsub('{url}', url)
+      else
+        @data[:cache_key]
+      end
+    end
+
     def cache_key=(cache_key)
       unless cache_key.include?('{url}')
         raise "OSRM API error: Invalid cache key #{cache_key.inspect}"
@@ -87,7 +95,9 @@ module OSRM
                end
       writer = :"#{option}="
 
-      define_method(reader) { @data[option] }
+      unless method_defined?(reader)
+        define_method(reader) { @data[option] }
+      end
       unless method_defined?(writer)
         define_method(writer) { |value| @data[option] = value }
       end
