@@ -12,6 +12,7 @@ module OSRM
     end
 
     def execute
+      build_uri
       json = fetch_json_data
       routes = []
       return routes if json.nil?
@@ -38,7 +39,6 @@ module OSRM
     private
 
     def fetch_json_data
-      build_uri
       raw_data = cache || fetch_raw_data
 
       json = JSON.parse(raw_data) if raw_data
@@ -74,10 +74,10 @@ module OSRM
 
     def api_request
       Timeout.timeout(configuration.timeout) do
-        Net::HTTP.start(uri.host, uri.port,
+        Net::HTTP.start(@uri.host, @uri.port,
                         use_ssl: configuration.use_ssl?) do |http|
           response = http.get(
-            uri.request_uri,
+            @uri.request_uri,
             'User-Agent' => configuration.user_agent
           )
 
@@ -126,18 +126,15 @@ module OSRM
       )
     end
 
-    def uri
-      @uri || build_uri
-    end
 
     def cache(value = nil)
       return nil unless configuration.cache
 
       if value
         configuration.cache[cache_key('version')] ||= OSRM::VERSION
-        configuration.cache[cache_key(uri.to_s)] = value
+        configuration.cache[cache_key(@uri.to_s)] = value
       else
-        configuration.cache[cache_key(uri.to_s)]
+        configuration.cache[cache_key(@uri.to_s)]
       end
     end
 
