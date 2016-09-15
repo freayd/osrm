@@ -2,11 +2,12 @@ require 'encoded_polyline'
 
 module OSRM
   class Route
-    attr_accessor :geometry, :summary
+    attr_accessor :geometry, :distance, :duration
 
-    def initialize(geometry: nil, summary: nil)
-      @geometry = decode_geometry(geometry)
-      @summary = summary
+    def initialize(json = {})
+      @geometry = decode_geometry(json[:geometry])
+      @distance = json[:distance] || 0
+      @duration = json[:duration] || 0
     end
 
     private
@@ -14,7 +15,7 @@ module OSRM
     def decode_geometry(geometry)
       return [] if geometry.nil? || geometry.empty?
 
-      EncodedPolyline.decode_points(geometry, 6).map do |point|
+      EncodedPolyline.decode_points(geometry, 5).map do |point|
         point.map { |coordinate| fix_float_precision(coordinate) }
       end
     end

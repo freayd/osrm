@@ -13,27 +13,7 @@ module OSRM
 
     def execute
       build_uri
-      json = fetch_json_data
-      routes = []
-      return routes if json.nil?
-
-      # Main route
-      routes << Route.new(
-        geometry: json['route_geometry'],
-        summary:  json['route_summary']
-      )
-
-      # Alternative routes
-      if json['found_alternative']
-        json['alternative_geometries'].each_index do |index|
-          routes << Route.new(
-            geometry: json['alternative_geometries'][index],
-            summary:  json['alternative_summaries'][index]
-          )
-        end
-      end
-
-      routes
+      fetch_json_data[:routes].map { |route| Route.new(route) }
     end
 
     private
@@ -41,7 +21,8 @@ module OSRM
     def fetch_json_data
       raw_data = cache || fetch_raw_data
 
-      json = JSON.parse(raw_data) if raw_data
+      json = JSON.parse(raw_data, symbolize_names: true)
+      raise "OSRM API error: #{json[:message]} (#{json[:code]})" unless json[:code] == 'Ok'
 
       cache(raw_data)
       json
@@ -93,7 +74,7 @@ module OSRM
     end
 
     def ensure_valid_response(response)
-      return if response.is_a?(Net::HTTPOK)
+      return if %w(200 400).include?(response.code)
 
       if configuration.use_demo_server? &&
          response['location'] &&
@@ -108,23 +89,29 @@ module OSRM
     def build_uri
       raise "OSRM API error: Server isn't configured" unless configuration.server
 
-      service  = 'viaroute'
+      service = 'route'
+      version = 'v1'
+      profile = 'driving'
+      format  = 'json'
+
       params = [
-        *@locations.map { |l| ['loc', l] },
-        %w(output json),
-        %w(instructions false),
-        %w(alt true)
+        %w(alternatives true),
+        %w(geometries polyline)
       ]
 
       uri_class = configuration.use_ssl? ? URI::HTTPS : URI::HTTP
       @uri = uri_class.build(
         host: configuration.server,
         port: configuration.port,
-        path: "/#{service}",
+        path: "/#{service}/#{version}/#{profile}/#{lonlat_locations.join(';')}.#{format}",
         query: URI.encode_www_form(params)
       )
     end
 
+    # Reverse from ['latitude,longitude'] to ['longitude,latitude']
+    def lonlat_locations
+      locations.map { |location| location.split(',').reverse.join(',') }
+    end
 
     def cache(value = nil)
       return nil unless configuration.cache
