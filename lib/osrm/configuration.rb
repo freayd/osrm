@@ -44,7 +44,7 @@ module OSRM
     end
 
     def port=(port)
-      @data[:port] = port && port.to_i
+      @data[:port] = port&.to_i
     end
 
     def use_ssl=(use_ssl)
@@ -52,7 +52,7 @@ module OSRM
     end
 
     def timeout=(timeout)
-      @data[:timeout] = timeout && timeout.to_i
+      @data[:timeout] = timeout&.to_i
     end
 
     def before_request=(before_request)
