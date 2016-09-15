@@ -13,7 +13,7 @@ module OSRM
   end
 
   def self.routes(*locations)
-    OSRM::Query.new(*locations).execute
+    Query.new(*locations).execute
   end
 
   def self.route(*locations)

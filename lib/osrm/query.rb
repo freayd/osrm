@@ -131,18 +131,18 @@ module OSRM
     end
 
     def cache(value = nil)
-      return nil unless OSRM.configuration.cache
+      return nil unless configuration.cache
 
       if value
-        OSRM.configuration.cache[cache_key('version')] ||= OSRM::VERSION
-        OSRM.configuration.cache[cache_key(uri.to_s)] = value
+        configuration.cache[cache_key('version')] ||= OSRM::VERSION
+        configuration.cache[cache_key(uri.to_s)] = value
       else
-        OSRM.configuration.cache[cache_key(uri.to_s)]
+        configuration.cache[cache_key(uri.to_s)]
       end
     end
 
     def cache_key(url)
-      OSRM.configuration.cache_key.gsub('{url}', url)
+      configuration.cache_key.gsub('{url}', url)
     end
 
     def configuration

@@ -36,7 +36,7 @@ module OSRM
 
     def server=(server)
       @data[:server] =
-        server == :demo ? Configuration::DEMO_SERVER.dup : server
+        server == :demo ? DEMO_SERVER.dup : server
     end
 
     def use_demo_server?
