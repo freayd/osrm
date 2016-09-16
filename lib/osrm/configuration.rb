@@ -71,6 +71,23 @@ module OSRM
       @data[:after_request] = after_request
     end
 
+    def cache=(cache)
+      @data[:cache] = cache
+      ensure_cache_version
+    end
+
+    # Raise an exception if major and minor versions of the cache and library are different
+    def ensure_cache_version
+      return unless cache
+
+      cache_version = cache[cache_key('version')]
+      if cache_version &&
+         Gem::Version.new(cache_version).bump != Gem::Version.new(OSRM::VERSION).bump
+        @data[:cache] = nil
+        raise "OSRM API error: Incompatible cache version #{cache_version}, expected #{OSRM::VERSION}"
+      end
+    end
+
     def cache_key(url = nil)
       if url
         @data[:cache_key]&.gsub('{url}', url)
@@ -85,6 +102,7 @@ module OSRM
       end
 
       @data[:cache_key] = cache_key
+      ensure_cache_version
     end
 
     # Dynamically add missing accessors
