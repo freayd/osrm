@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.author      = 'Freayd'
   s.homepage    = 'https://github.com/freayd/osrm'
 
-  s.files       = Dir['README.md', 'LICENSE', 'lib/**/*']
+  s.files       = Dir['README.md', 'LICENSE', 'CHANGELOG.md' 'lib/**/*']
 
   s.platform    = Gem::Platform::RUBY
   s.required_ruby_version = '>= 2.3.0'
