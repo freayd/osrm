@@ -114,6 +114,11 @@ class TestConfiguration < Minitest::Test
     assert @configuration.after_request.lambda?
   end
 
+  def test_invalid_before_after_request
+    assert_raises(RuntimeError) { @configuration.before_request = 'not a Proc' }
+    assert_raises(RuntimeError) { @configuration.after_request = ['not a Proc'] }
+  end
+
   def test_nil_cache
     @configuration.cache = nil
     assert_nil @configuration.cache
