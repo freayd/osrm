@@ -1,5 +1,9 @@
 ## Changelog
 
+### OSRM Gem 0.4.1 (2016 Sep 17) ###
+
+* Add overview option
+
 ### OSRM Gem 0.4.0 (2016 Sep 17) ###
 
 * Upgrade to server API 5
