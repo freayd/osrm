@@ -11,8 +11,8 @@ module OSRM
       @locations = locations.compact.reject(&:empty?)
     end
 
-    def execute(overview: nil)
-      build_uri(overview: overview)
+    def execute(alternatives: nil, overview: nil)
+      build_uri(alternatives: alternatives, overview: overview)
       fetch_json_data[:routes].map { |route| Route.new(route) }
     end
 
@@ -86,7 +86,7 @@ module OSRM
       end
     end
 
-    def build_uri(overview: nil)
+    def build_uri(alternatives: nil, overview: nil)
       raise "OSRM API error: Server isn't configured" unless configuration.server
 
       service = 'route'
@@ -94,6 +94,7 @@ module OSRM
       profile = 'driving'
       format  = 'json'
 
+      alternatives = alternatives.nil? ? false : (alternatives == true)
       if overview.nil?
         overview = configuration.overview
       else
@@ -101,8 +102,8 @@ module OSRM
       end
 
       params = [
-        %w(alternatives true),
-        %w(geometries polyline),
+        ['alternatives', alternatives.to_s],
+        ['geometries', 'polyline'],
         ['overview', overview.to_s]
       ]
 

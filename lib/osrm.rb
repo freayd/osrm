@@ -13,10 +13,10 @@ module OSRM
   end
 
   def self.routes(*locations, overview: nil)
-    Query.new(*locations).execute(overview: overview)
+    Query.new(*locations).execute(alternatives: true, overview: overview)
   end
 
   def self.route(*locations, overview: nil)
-    Query.new(*locations).execute(overview: overview).first
+    Query.new(*locations).execute(alternatives: false, overview: overview).first
   end
 end
