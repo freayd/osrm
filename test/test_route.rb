@@ -15,11 +15,11 @@ class TestRoute < Minitest::Test
     [
       [
         [[3.85, -12.02], [4.07, -12.095], [4.3252, -12.6453]],
-        '_p~iF~ps|U_ulLnnqC_mqNvxq`@'
+        'o}nV~sjhA_~i@vsM_zp@jnjB'
       ],
       [
-        [[21, 78], [-3.075833, 37.353333], [72, -40], [-13.163333, -72.545556]],
-        '_sv`g@_wvwsCpbn|l@t_{olAqngenChvgprChs}laDfpla}@'
+        [[21, 78], [-3.07583, 37.35333], [72, -40], [-13.16333, -72.54556]],
+        '_qd_C_ka{M|h}qCtxawF}ffiMhacwMxmxfOvpseE'
       ],
       [
         [[0, 0]],
