@@ -11,12 +11,12 @@ class TestConfiguration < Minitest::Test
     refute @configuration.use_ssl?
 
     assert_equal 3, @configuration.timeout
-    assert_match /\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent
+    assert_match(/\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent)
     assert_nil @configuration.before_request
     assert_nil @configuration.after_request
 
     assert_nil @configuration.cache
-    assert_match /\A.{2,10}\{url\}\z/, @configuration.cache_key
+    assert_match(/\A.{2,10}\{url\}\z/, @configuration.cache_key)
 
     refute @configuration.use_demo_server?
   end
