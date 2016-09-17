@@ -38,5 +38,6 @@ class TestOSRM < Minitest::Test
 
   def test_configuration_singleton
     assert_same OSRM::Configuration.instance, OSRM.configuration
+    assert_raises(NoMethodError) { OSRM::Configuration.new }
   end
 end
