@@ -4,12 +4,14 @@ class TestRoute < Minitest::Test
   def test_empty_route
     [
       OSRM::Route.new,
-      OSRM::Route.new(geometry: nil),
+      OSRM::Route.new(geometry: nil, distance: nil, duration: nil),
       OSRM::Route.new(geometry: '')
     ].each do |route|
       assert_equal [], route.geometry
       assert_equal 0, route.distance
       assert_equal 0, route.duration
+      assert_kind_of Float, route.distance
+      assert_kind_of Float, route.duration
     end
   end
 

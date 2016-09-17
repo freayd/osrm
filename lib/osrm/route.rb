@@ -6,8 +6,8 @@ module OSRM
 
     def initialize(json = {})
       @geometry = decode_geometry(json[:geometry])
-      @distance = json[:distance] || 0
-      @duration = json[:duration] || 0
+      @distance = json[:distance].to_f
+      @duration = json[:duration].to_f
     end
 
     private
