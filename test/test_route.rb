@@ -2,12 +2,15 @@ require 'helper'
 
 class TestRoute < Minitest::Test
   def test_empty_route
+    assert_equal nil, OSRM::Route.new.geometry
+    assert_equal nil, OSRM::Route.new(geometry: nil).geometry
+    assert_equal [],  OSRM::Route.new(geometry: '').geometry
+
     [
       OSRM::Route.new,
-      OSRM::Route.new(geometry: nil, distance: nil, duration: nil),
-      OSRM::Route.new(geometry: '')
+      OSRM::Route.new(distance: nil, duration: nil),
+      OSRM::Route.new(distance: '', duration: '')
     ].each do |route|
-      assert_equal [], route.geometry
       assert_equal 0, route.distance
       assert_equal 0, route.duration
       assert_kind_of Float, route.distance

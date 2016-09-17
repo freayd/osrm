@@ -12,11 +12,11 @@ module OSRM
     Configuration.instance
   end
 
-  def self.routes(*locations)
-    Query.new(*locations).execute
+  def self.routes(*locations, overview: nil)
+    Query.new(*locations).execute(overview: overview)
   end
 
-  def self.route(*locations)
-    routes(*locations).first
+  def self.route(*locations, overview: nil)
+    Query.new(*locations).execute(overview: overview).first
   end
 end

@@ -18,6 +18,8 @@ class TestConfiguration < Minitest::Test
     assert_nil @configuration.cache
     assert_match(/\A.{2,10}\{url\}\z/, @configuration.cache_key)
 
+    assert_equal :simplified, @configuration.overview
+
     refute @configuration.use_demo_server?
   end
 
@@ -38,7 +40,9 @@ class TestConfiguration < Minitest::Test
       after_request: nil,
 
       cache:      {},
-      cache_key:  'one-agent-{url}'
+      cache_key:  'one-agent-{url}',
+
+      overview: false
     )
     assert_equal 'server.com', @configuration.server
     assert_equal 123, @configuration.port
@@ -54,6 +58,8 @@ class TestConfiguration < Minitest::Test
     assert_equal 'one-agent-{url}', @configuration.cache_key
     assert_equal 'one-agent-example.com', @configuration.cache_key('example.com')
     refute_respond_to @configuration, :invalid
+
+    assert_equal false, @configuration.overview
 
     assert_same @configuration, @configuration.merge!(key: 'value')
   end
@@ -171,6 +177,17 @@ class TestConfiguration < Minitest::Test
 
   def test_invalid_cache_key
     assert_raises(RuntimeError) { @configuration.cache_key = 'invalid key' }
+  end
+
+  def test_overview
+    [false, :simplified, :full].each do |overview|
+      @configuration.overview = overview
+      assert_equal overview, @configuration.overview
+    end
+
+    assert_raises(RuntimeError) { @configuration.overview = nil    }
+    assert_raises(RuntimeError) { @configuration.overview = :foo   }
+    assert_raises(RuntimeError) { @configuration.overview = :fulll }
   end
 
   def randomize_change(method_1, method_2)

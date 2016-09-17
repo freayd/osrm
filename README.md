@@ -29,7 +29,11 @@ You can [run your own server](https://github.com/Project-OSRM/osrm-backend/wiki)
           # The cache can be any object providing [] and []= methods.
           # The cache key must contain the {url} pattern.
           cache:      {},                 # Default: nil (no cache)
-          cache_key:  'my-script:{url}'   # Default: 'osrm:{url}'
+          cache_key:  'my-script:{url}',  # Default: 'osrm:{url}'
+
+          # Requests
+          # Specify the precision of the overview geometries returned
+          overview: :full                 # Possible values: false, :simplified (default), :full
 
         )
 

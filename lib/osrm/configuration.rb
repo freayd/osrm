@@ -16,7 +16,9 @@ module OSRM
       after_request:  nil,
 
       cache:     nil,
-      cache_key: 'osrm:{url}'
+      cache_key: 'osrm:{url}',
+
+      overview:  :simplified
     }.freeze
 
     DEMO_SERVER = 'router.project-osrm.org'.freeze
@@ -103,6 +105,17 @@ module OSRM
 
       @data[:cache_key] = cache_key
       ensure_cache_version
+    end
+
+    def overview=(overview)
+      ensure_valid_overview(overview)
+      @data[:overview] = overview
+    end
+
+    def ensure_valid_overview(overview)
+      unless [false, :simplified, :full].include?(overview)
+        raise "OSRM API error: Invalid overview type #{overview.inspect}"
+      end
     end
 
     # Dynamically add missing accessors

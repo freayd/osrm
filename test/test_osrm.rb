@@ -14,6 +14,9 @@ class TestOSRM < Minitest::Test
 
       cache:     nil,
       cache_key: 'agent_route_cache_{url}',
+
+      overview: :full,
+
       invalid:   'invalid option!'
     )
     assert_equal 'example.com', OSRM.configuration.server
@@ -27,6 +30,9 @@ class TestOSRM < Minitest::Test
 
     assert_nil OSRM.configuration.cache
     assert_equal 'agent_route_cache_{url}', OSRM.configuration.cache_key
+
+    assert_equal :full, OSRM.configuration.overview
+
     refute_respond_to OSRM.configuration, :invalid
   end
 

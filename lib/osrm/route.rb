@@ -13,7 +13,8 @@ module OSRM
     private
 
     def decode_geometry(geometry)
-      return [] if geometry.nil? || geometry.empty?
+      return nil if geometry.nil?
+      return [] if geometry.empty?
 
       EncodedPolyline.decode_points(geometry, 5).map do |point|
         point.map { |coordinate| fix_float_precision(coordinate) }
