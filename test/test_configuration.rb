@@ -52,6 +52,7 @@ class TestConfiguration < Minitest::Test
     assert_kind_of Hash, @configuration.cache
     assert_empty @configuration.cache
     assert_equal 'one-agent-{url}', @configuration.cache_key
+    assert_equal 'one-agent-example.com', @configuration.cache_key('example.com')
     refute_respond_to @configuration, :invalid
 
     assert_same @configuration, @configuration.merge!(key: 'value')
@@ -129,10 +130,41 @@ class TestConfiguration < Minitest::Test
     randomize_change(:test_nil_cache, :test_cache)
   end
 
+  def test_cache_version_1
+    @configuration.cache = { 'test#version' => '9.9.9' }
+    assert_raises(RuntimeError) { @configuration.cache_key = 'test#{url}' }
+  end
+
+  def test_cache_version_2
+    @configuration.cache_key = 'test/{url}'
+    assert_raises(RuntimeError) { @configuration.cache = { 'test/version' => '0.0.0' } }
+  end
+
+  def test_cache_version_3
+    @configuration.cache = { 'test,version' => OSRM::VERSION }
+    @configuration.cache_key = 'test,{url}'
+
+    v = Gem::Version.new(OSRM::VERSION).release.to_s.split('.').map(&:to_i)
+    prev_minor = v.each_with_index.map { |x,i| i == 1 ? x - 1 : (i == 2 ?  0 : x) }.join('.')
+    patch_zero = v.each_with_index.map { |x,i| i == 2 ?     0 : x }.join('.')
+    next_patch = v.each_with_index.map { |x,i| i == 2 ? x + 1 : x }.join('.')
+    next_minor = v.each_with_index.map { |x,i| i == 1 ? x + 1 : (i == 2 ?  0 : x) }.join('.')
+    next_major = v.each_with_index.map { |x,i| i == 0 ? x + 1 : 0 }.join('.')
+
+    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => prev_minor } }
+                                  @configuration.cache = { 'test,version' => patch_zero }
+                                  @configuration.cache = { 'test,version' => next_patch }
+    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => next_minor } }
+    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => next_major } }
+  end
+
   def test_cache_key
     @configuration.cache_key = 'test $ {url}'
     assert_equal 'test $ {url}', @configuration.cache_key
+    assert_equal 'test $ http://hello', @configuration.cache_key('http://hello')
+  end
 
+  def test_invalid_cache_key
     assert_raises(RuntimeError) { @configuration.cache_key = 'invalid key' }
   end
 
