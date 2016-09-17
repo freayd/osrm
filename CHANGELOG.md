@@ -1,5 +1,11 @@
 ## Changelog
 
+### OSRM Gem 0.4.0 (2016 Sep 17) ###
+
+* Upgrade to server API 5
+* Route object lost its summary attribute in favor of distance and duration
+* Raise errors instead of printing warnings
+
 ### OSRM Gem 0.3.0 (2014 Dec 21) ###
 
 * Add before & after request callbacks
