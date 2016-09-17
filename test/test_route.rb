@@ -8,6 +8,8 @@ class TestRoute < Minitest::Test
       OSRM::Route.new(geometry: '')
     ].each do |route|
       assert_equal [], route.geometry
+      assert_equal 0, route.distance
+      assert_equal 0, route.duration
     end
   end
 
@@ -29,6 +31,16 @@ class TestRoute < Minitest::Test
       assert_equal decoded,
                    OSRM::Route.new(geometry: encoded).geometry
     end
+  end
+
+  def test_distance
+    assert_equal 12,    OSRM::Route.new(distance: 12).distance
+    assert_equal 12.11, OSRM::Route.new(distance: 12.11).distance
+  end
+
+  def test_duration
+    assert_equal 98,    OSRM::Route.new(duration: 98).duration
+    assert_equal 98.99, OSRM::Route.new(duration: 98.99).duration
   end
 
   def test_float_precision
