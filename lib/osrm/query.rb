@@ -81,9 +81,16 @@ module OSRM
          response['location']['forbidden.html']
         raise 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
       else
+        ensure_ready_server if response.code == '404'
         raise 'OSRM API error: Invalid response' \
               " #{response.code} #{response.message}"
       end
+    end
+
+    def ensure_ready_server
+      root_uri = @uri.class.build(host: @uri.host, port: @uri.port)
+      root_response = Net::HTTP.get(root_uri)
+      raise "OSRM API error: #{root_response}" if root_response.match(/NOT READY/i)
     end
 
     def build_uri(alternatives: nil, overview: nil)
