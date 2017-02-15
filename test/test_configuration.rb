@@ -76,10 +76,6 @@ class TestConfiguration < Minitest::Test
     assert @configuration.use_demo_server?
   end
 
-  def test_server_change
-    randomize_change(:test_server, :test_demo_server)
-  end
-
   def test_port
     @configuration.port = '123'
     assert_equal 123, @configuration.port
@@ -94,10 +90,6 @@ class TestConfiguration < Minitest::Test
   def test_ssl_false
     @configuration.use_ssl = false
     refute @configuration.use_ssl?
-  end
-
-  def test_ssl_change
-    randomize_change(:test_ssl_true, :test_ssl_false)
   end
 
   def test_timeout
@@ -135,10 +127,6 @@ class TestConfiguration < Minitest::Test
     refute_empty @configuration.cache
     assert_equal '1', @configuration.cache['a']
     assert_equal '2', @configuration.cache['b']
-  end
-
-  def test_cache_change
-    randomize_change(:test_nil_cache, :test_cache)
   end
 
   def test_cache_version_1
@@ -188,13 +176,5 @@ class TestConfiguration < Minitest::Test
     assert_raises(RuntimeError) { @configuration.overview = nil    }
     assert_raises(RuntimeError) { @configuration.overview = :foo   }
     assert_raises(RuntimeError) { @configuration.overview = :fulll }
-  end
-
-  def randomize_change(method_1, method_2)
-    method_1_first = rand(2).zero?
-    public_send(method_1) if method_1_first
-    public_send(method_2)
-    public_send(method_1)
-    public_send(method_2) unless method_1_first
   end
 end
