@@ -79,7 +79,7 @@ class TestConfiguration < Minitest::Test
   def test_port
     @configuration.port = '123'
     assert_equal 123, @configuration.port
-    assert_instance_of Fixnum, @configuration.port
+    assert_instance_of Integer, @configuration.port
   end
 
   def test_ssl_true
@@ -95,7 +95,7 @@ class TestConfiguration < Minitest::Test
   def test_timeout
     @configuration.timeout = 5.0
     assert_equal 5, @configuration.timeout
-    assert_instance_of Fixnum, @configuration.timeout
+    assert_instance_of Integer, @configuration.timeout
   end
 
   def test_user_agent
