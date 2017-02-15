@@ -2,9 +2,9 @@ require 'helper'
 
 class TestRoute < Minitest::Test
   def test_empty_route
-    assert_equal nil, OSRM::Route.new.geometry
-    assert_equal nil, OSRM::Route.new(geometry: nil).geometry
-    assert_equal [],  OSRM::Route.new(geometry: '').geometry
+    assert_nil OSRM::Route.new.geometry
+    assert_nil OSRM::Route.new(geometry: nil).geometry
+    assert_equal [], OSRM::Route.new(geometry: '').geometry
 
     [
       OSRM::Route.new,
