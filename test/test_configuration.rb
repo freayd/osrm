@@ -21,6 +21,7 @@ class TestConfiguration < Minitest::Test
     assert_equal :simplified, @configuration.overview
 
     refute @configuration.use_demo_server?
+    refute @configuration.use_mapbox_server?
   end
 
   def test_merge
@@ -68,6 +69,7 @@ class TestConfiguration < Minitest::Test
     @configuration.server = 'example.com'
     assert_equal 'example.com', @configuration.server
     refute @configuration.use_demo_server?
+    refute @configuration.use_mapbox_server?
   end
 
   def test_demo_server
@@ -75,6 +77,14 @@ class TestConfiguration < Minitest::Test
     assert_equal OSRM::Configuration::DEMO_SERVER, @configuration.server
     assert @configuration.use_demo_server?
   end
+
+   def test_mapbox_server
+     @configuration.use_ssl = false
+     @configuration.server = :mapbox
+     assert_equal OSRM::Configuration::MAPBOX_SERVER, @configuration.server
+     assert @configuration.use_mapbox_server?
+     assert @configuration.use_ssl?
+   end
 
   def test_port
     @configuration.port = '123'

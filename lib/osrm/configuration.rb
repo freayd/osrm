@@ -9,6 +9,7 @@ module OSRM
       server:  nil,
       port:    nil,
       use_ssl: false,
+      api_key: nil,
 
       timeout:        3,
       user_agent:     "OSRMRubyGem/#{OSRM::VERSION}",
@@ -21,7 +22,8 @@ module OSRM
       overview:  :simplified
     }.freeze
 
-    DEMO_SERVER = 'router.project-osrm.org'.freeze
+    DEMO_SERVER   = 'router.project-osrm.org'.freeze
+    MAPBOX_SERVER = 'api.mapbox.com'.freeze
 
     def initialize
       @data = {}
@@ -38,11 +40,23 @@ module OSRM
 
     def server=(server)
       @data[:server] =
-        server == :demo ? DEMO_SERVER.dup : server
+        case server
+        when :demo, DEMO_SERVER
+          DEMO_SERVER.dup
+        when :mapbox, MAPBOX_SERVER
+          self.use_ssl = true
+          MAPBOX_SERVER.dup
+        else
+          server
+        end
     end
 
     def use_demo_server?
       @data[:server] == DEMO_SERVER
+    end
+
+    def use_mapbox_server?
+      @data[:server] == MAPBOX_SERVER
     end
 
     def port=(port)

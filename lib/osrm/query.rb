@@ -96,9 +96,10 @@ module OSRM
     def build_uri(alternatives: nil, overview: nil)
       raise "OSRM API error: Server isn't configured" unless configuration.server
 
-      service = 'route'
-      version = 'v1'
-      profile = 'driving'
+      use_mapbox = configuration.use_mapbox_server?
+      service = use_mapbox ? 'directions' : 'route'
+      version = use_mapbox ? 'v5' : 'v1'
+      profile = use_mapbox ? 'mapbox/driving' : 'driving'
       format  = 'json'
 
       alternatives = alternatives.nil? ? false : (alternatives == true)
@@ -113,6 +114,8 @@ module OSRM
         ['geometries', 'polyline'],
         ['overview', overview.to_s]
       ]
+
+      params << ['access_token', configuration.api_key] if use_mapbox
 
       uri_class = configuration.use_ssl? ? URI::HTTPS : URI::HTTP
       @uri = uri_class.build(
