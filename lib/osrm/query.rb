@@ -22,7 +22,7 @@ module OSRM
       raw_data = cache || fetch_raw_data
 
       json = JSON.parse(raw_data, symbolize_names: true)
-      raise "OSRM API error: #{json[:message]} (#{json[:code]})" unless json[:code] == 'Ok'
+      raise "OSRM API error: #{json[:message]}#{' ('+json[:code]+')' if json[:code]}" unless json[:code] == 'Ok'
 
       cache(raw_data)
       json
@@ -76,15 +76,20 @@ module OSRM
     def ensure_valid_response(response)
       return if %w(200 400).include?(response.code)
 
-      if configuration.use_demo_server? &&
-         response['location'] &&
-         response['location']['forbidden.html']
-        raise 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
-      else
-        ensure_ready_server if response.code == '404'
-        raise 'OSRM API error: Invalid response' \
-              " #{response.code} #{response.message}"
+      begin
+        return if response.body.start_with?('{') && JSON.parse(response.body)
+      rescue JSON::ParserError
+        nil
       end
+
+      if configuration.use_demo_server? &&
+         response['location']&.include?('forbidden.html')
+        raise 'OSRM API error: API usage policy has been violated, see https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy'
+      end
+
+      ensure_ready_server if response.code == '404'
+      raise 'OSRM API error: Invalid response' + \
+            " #{response.code} #{response.message}"
     end
 
     def ensure_ready_server
