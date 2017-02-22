@@ -11,8 +11,8 @@ module OSRM
       @locations = locations.compact.reject(&:empty?)
     end
 
-    def execute(alternatives: nil, overview: nil)
-      build_uri(alternatives: alternatives, overview: overview)
+    def execute(alternatives: nil, overview: nil, profile: nil)
+      build_uri(alternatives: alternatives, overview: overview, profile: profile)
       fetch_json_data[:routes].map { |route| Route.new(route) }
     end
 
@@ -98,13 +98,14 @@ module OSRM
       raise "OSRM API error: #{root_response}" if root_response.match(/NOT READY/i)
     end
 
-    def build_uri(alternatives: nil, overview: nil)
+    def build_uri(alternatives: nil, overview: nil, profile: nil)
       raise "OSRM API error: Server isn't configured" unless configuration.server
 
       use_mapbox = configuration.use_mapbox_server?
       service = use_mapbox ? 'directions' : 'route'
       version = use_mapbox ? 'v5' : 'v1'
-      profile = use_mapbox ? 'mapbox/driving' : 'driving'
+      profile ||= 'driving'
+      profile.prepend('mapbox/') if use_mapbox
       format  = 'json'
 
       alternatives = alternatives.nil? ? false : (alternatives == true)
