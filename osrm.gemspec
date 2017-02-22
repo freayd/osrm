@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'bundler',       '~> 1', '>= 1.7.0'
   s.add_development_dependency 'minitest',      '~> 5'
-  s.add_development_dependency 'rake',         '~> 11', '>= 11.2.2'
+  s.add_development_dependency 'rake',                  '>= 10.2.0', '< 13.0'
   s.add_runtime_dependency 'encoded_polyline',  '~> 0', '>= 0.0.2'
 end
