@@ -92,15 +92,17 @@ module OSRM
       ensure_cache_version
     end
 
-    # Raise an exception if major and minor versions of the cache and library are different
+    # Raise an exception if the cache isn't compatible with the current library version
     def ensure_cache_version
       return unless cache
 
       cache_version = cache[cache_key('version')]
+      minimum_version = '0.4.0'
       if cache_version &&
-         Gem::Version.new(cache_version).bump != Gem::Version.new(OSRM::VERSION).bump
+         Gem::Version.new(cache_version) < Gem::Version.new(minimum_version)
         @data[:cache] = nil
-        raise "OSRM API error: Incompatible cache version #{cache_version}, expected #{OSRM::VERSION}"
+        raise "OSRM API error: Incompatible cache version #{cache_version}, " +
+              "expected #{minimum_version} or higher"
       end
     end
 

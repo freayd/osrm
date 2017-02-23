@@ -139,17 +139,27 @@ class TestConfiguration < Minitest::Test
     assert_equal '2', @configuration.cache['b']
   end
 
-  def test_cache_version_1
+  def test_valid_cache_version_1
     @configuration.cache = { 'test#version' => '9.9.9' }
-    assert_raises(RuntimeError) { @configuration.cache_key = 'test#{url}' }
+    @configuration.cache_key = 'test#{url}'
   end
 
-  def test_cache_version_2
+  def test_valid_cache_version_2
+    @configuration.cache_key = 'test|{url}'
+    @configuration.cache = { 'test|version' => '0.4.0' }
+  end
+
+  def test_invalid_cache_version_1
     @configuration.cache_key = 'test/{url}'
-    assert_raises(RuntimeError) { @configuration.cache = { 'test/version' => '0.0.0' } }
+    assert_raises(RuntimeError) { @configuration.cache = { 'test/version' => '0.3.9' } }
   end
 
-  def test_cache_version_3
+  def test_invalid_cache_version_2
+    @configuration.cache = { 'test!version' => '0.3.9' }
+    assert_raises(RuntimeError) { @configuration.cache_key = 'test!{url}' }
+  end
+
+  def test_relative_cache_version
     @configuration.cache = { 'test,version' => OSRM::VERSION }
     @configuration.cache_key = 'test,{url}'
 
@@ -163,8 +173,8 @@ class TestConfiguration < Minitest::Test
     assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => prev_minor } }
                                   @configuration.cache = { 'test,version' => patch_zero }
                                   @configuration.cache = { 'test,version' => next_patch }
-    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => next_minor } }
-    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => next_major } }
+                                  @configuration.cache = { 'test,version' => next_minor }
+                                  @configuration.cache = { 'test,version' => next_major }
   end
 
   def test_cache_key
