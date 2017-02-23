@@ -1,5 +1,10 @@
 ## Changelog
 
+### OSRM Gem 0.4.2 (2017 Feb 23) ###
+
+* Support Mapbox server
+* Support routing profiles
+
 ### OSRM Gem 0.4.1 (2016 Sep 17) ###
 
 * Add overview option
