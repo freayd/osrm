@@ -105,7 +105,7 @@ module OSRM
       service = use_mapbox ? 'directions' : 'route'
       version = use_mapbox ? 'v5' : 'v1'
       profile ||= 'driving'
-      profile.prepend('mapbox/') if use_mapbox
+      profile = 'mapbox/' + profile if use_mapbox # NOTE: Do NOT use prepend which modifies the source parameter
       format  = 'json'
 
       alternatives = alternatives.nil? ? false : (alternatives == true)
