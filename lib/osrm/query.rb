@@ -88,8 +88,7 @@ module OSRM
       end
 
       ensure_ready_server if response.code == '404'
-      raise 'OSRM API error: Invalid response' + \
-            " #{response.code} #{response.message}"
+      raise "OSRM API error: Invalid response #{response.code} #{response.message}"
     end
 
     def ensure_ready_server
