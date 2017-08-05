@@ -1,5 +1,9 @@
 ## Changelog
 
+### OSRM Gem 0.4.3 (2017 Aug 5) ###
+
+* Fix bug in URI construction
+
 ### OSRM Gem 0.4.2 (2017 Feb 23) ###
 
 * Support Mapbox server
