@@ -194,7 +194,12 @@ class TestConfiguration < Minitest::Test
     next_minor = v.each_with_index.map { |x,i| i == 1 ? x + 1 : (i == 2 ?  0 : x) }.join('.')
     next_major = v.each_with_index.map { |x,i| i == 0 ? x + 1 : 0 }.join('.')
 
-    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => prev_minor } }
+    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => '0.0.0' } }
+    assert_raises(RuntimeError) { @configuration.cache = { 'test,version' => '0.3.0' } }
+                                  @configuration.cache = { 'test,version' => '0.4.0' }
+                                  @configuration.cache = { 'test,version' => '0.4.1' }
+                                  @configuration.cache = { 'test,version' => '1.0.0' }
+                                  @configuration.cache = { 'test,version' => prev_minor }
                                   @configuration.cache = { 'test,version' => patch_zero }
                                   @configuration.cache = { 'test,version' => next_patch }
                                   @configuration.cache = { 'test,version' => next_minor }

@@ -1,5 +1,9 @@
 ## Changelog
 
+### OSRM Gem 0.5.0 (2018 Jul 5) ###
+
+* Add path prefix configuration option
+
 ### OSRM Gem 0.4.3 (2017 Aug 5) ###
 
 * Fix bug in URI construction
