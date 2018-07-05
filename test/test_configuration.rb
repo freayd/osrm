@@ -9,6 +9,7 @@ class TestConfiguration < Minitest::Test
     assert_nil @configuration.server
     assert_nil @configuration.port
     refute @configuration.use_ssl?
+    assert_nil @configuration.api_key
 
     assert_equal 3, @configuration.timeout
     assert_match(/\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent)
@@ -34,6 +35,7 @@ class TestConfiguration < Minitest::Test
     @configuration.merge!(
       port:    123,
       use_ssl: false,
+      api_key: '0123456789',
       invalid: 'invalid option!',
 
       timeout:       42,
@@ -48,6 +50,7 @@ class TestConfiguration < Minitest::Test
     assert_equal 'server.com', @configuration.server
     assert_equal 123, @configuration.port
     refute @configuration.use_ssl?
+    assert_equal '0123456789', @configuration.api_key
 
     assert_equal 42, @configuration.timeout
     assert_equal 'OneAgent/6.0', @configuration.user_agent
@@ -100,6 +103,11 @@ class TestConfiguration < Minitest::Test
   def test_ssl_false
     @configuration.use_ssl = false
     refute @configuration.use_ssl?
+  end
+
+  def test_api_key
+    @configuration.api_key = '6uKfQuAe2Y'
+    assert_equal '6uKfQuAe2Y', @configuration.api_key
   end
 
   def test_timeout
