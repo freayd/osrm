@@ -15,9 +15,10 @@ You can [run your own server](https://github.com/Project-OSRM/osrm-backend/wiki)
         OSRM.configure(
 
           # Connection
-          server:     'example.com',      # Must be specified
-          port:       8080,               # Default: 80 or 443 if SSL
-          use_ssl:    true,               # Default: false
+          server:       'example.com',      # Must be specified
+          port:         8080,               # Default: 80 or 443 if SSL
+          use_ssl:      true,               # Default: false
+          path_prefix:  '/optional/path',   # Default: ''
           ## OSRM demo server connection
           # server:     :demo,
           ## Mapbox server connection

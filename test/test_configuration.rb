@@ -10,6 +10,7 @@ class TestConfiguration < Minitest::Test
     assert_nil @configuration.port
     refute @configuration.use_ssl?
     assert_nil @configuration.api_key
+    assert_empty @configuration.path_prefix
 
     assert_equal 3, @configuration.timeout
     assert_match(/\AOSRMRubyGem\/\d+\.\d+\.\d+\z/, @configuration.user_agent)
@@ -29,6 +30,7 @@ class TestConfiguration < Minitest::Test
     @configuration.server  = 'server.com'
     @configuration.port    = 51
     @configuration.use_ssl = true
+    @configuration.path_prefix = '/path/example'
     @configuration.before_request = -> {}
     @configuration.after_request  = -> {}
     @configuration.cache   = nil
@@ -51,6 +53,7 @@ class TestConfiguration < Minitest::Test
     assert_equal 123, @configuration.port
     refute @configuration.use_ssl?
     assert_equal '0123456789', @configuration.api_key
+    assert_equal '/path/example', @configuration.path_prefix
 
     assert_equal 42, @configuration.timeout
     assert_equal 'OneAgent/6.0', @configuration.user_agent
@@ -108,6 +111,19 @@ class TestConfiguration < Minitest::Test
   def test_api_key
     @configuration.api_key = '6uKfQuAe2Y'
     assert_equal '6uKfQuAe2Y', @configuration.api_key
+  end
+
+  def test_path_prefix
+    @configuration.path_prefix = '/dir/subdir'
+    assert_equal '/dir/subdir', @configuration.path_prefix
+  end
+
+  def test_invalid_path_prefix_1
+    assert_raises(RuntimeError) { @configuration.path_prefix = 'dir/subdir' }
+  end
+
+  def test_invalid_path_prefix_2
+    assert_raises(RuntimeError) { @configuration.path_prefix = '/dir/subdir/' }
   end
 
   def test_timeout

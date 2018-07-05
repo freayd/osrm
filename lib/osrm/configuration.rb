@@ -10,6 +10,7 @@ module OSRM
       port:    nil,
       use_ssl: false,
       api_key: nil,
+      path_prefix: '',
 
       timeout:        3,
       user_agent:     "OSRMRubyGem/#{OSRM::VERSION}",
@@ -65,6 +66,14 @@ module OSRM
 
     def use_ssl=(use_ssl)
       @data[:use_ssl] = use_ssl ? true : false
+    end
+
+    def path_prefix=(path_prefix)
+      unless path_prefix.empty? || path_prefix.match?(/\A\/.*[^\/]\z/)
+        raise "OSRM API error: Invalid path prefix #{path_prefix.inspect}"
+      end
+
+      @data[:path_prefix] = path_prefix
     end
 
     def timeout=(timeout)

@@ -126,7 +126,7 @@ module OSRM
       @uri = uri_class.build(
         host: configuration.server,
         port: configuration.port,
-        path: "/#{service}/#{version}/#{profile}/#{lonlat_locations.join(';')}.#{format}",
+        path: "#{configuration.path_prefix}/#{service}/#{version}/#{profile}/#{lonlat_locations.join(';')}.#{format}",
         query: URI.encode_www_form(params)
       )
     end
